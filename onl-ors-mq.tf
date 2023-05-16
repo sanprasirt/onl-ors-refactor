@@ -5,11 +5,11 @@ resource "aws_mq_broker" "rabbit_mq" {
   engine_version     = "3.10.20"
   host_instance_type = "mq.t3.micro"
   security_groups    = [aws_security_group.rabbit_mq_sg.id]
-  subnet_ids         = var.aws_app_subnets
+  subnet_ids         = ["subnet-00c5c5986096d3d47"]
 
   user {
-    username = "ExampleUser"
-    password = "asdfsdfsdfsdfksdf@"
+    username = "guest"
+    password = "gov3sl5iyEjezoreqaRo"
   }
 
   tags = merge(
