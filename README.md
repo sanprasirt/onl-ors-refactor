@@ -1,4 +1,4 @@
-# Deploy aws services
+# Deploy aws services using terraform
 
 ## Usage
 
