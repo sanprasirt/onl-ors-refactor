@@ -8,7 +8,7 @@ resource "aws_mq_broker" "rabbit_mq" {
   subnet_ids         = ["subnet-00c5c5986096d3d47"]
 
   user {
-    username = "guest"
+    username = "onlorsdev"
     password = "gov3sl5iyEjezoreqaRo"
   }
 

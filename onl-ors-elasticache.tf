@@ -23,6 +23,19 @@ resource "aws_elasticache_cluster" "elasticache_cluster" {
   )
 }
 
+# Create Elasticache REDIS User
+resource "aws_elasticache_user" "elasticache_user" {
+  user_id       = "onlorsdev"
+  user_name     = "onlorsdev"
+  access_string = "on ~* +@all"
+  engine        = "REDIS"
+
+  authentication_mode {
+    type      = "password"
+    passwords = ["gov3sl5iyEjezoreqaRo"]
+  }
+}
+
 #  Create Cloudwatch log groups
 resource "aws_cloudwatch_log_group" "elasticache_cluster_log" {
   name              = "/aws/elasticache/${local.prefix}-redis-dev"
