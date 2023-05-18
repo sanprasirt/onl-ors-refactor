@@ -7,7 +7,7 @@ resource "aws_elasticache_cluster" "elasticache_cluster" {
   parameter_group_name = "default.redis3.2"
   engine_version       = "3.2.10"
   port                 = 6379
-  security_group_ids   = aws_security_group.elasticache_cluster_sg.id
+  security_group_ids = [aws_security_group.redis_cluster_sg.id]
   subnet_group_name    = aws_elasticache_subnet_group.elasticache_cluster_subnet_group.name
 
 
@@ -48,8 +48,9 @@ resource "aws_elasticache_subnet_group" "elasticache_cluster_subnet_group" {
   name       = "${local.prefix}-redis-subnet-group"
   subnet_ids = var.aws_app_subnets
 }
+
 # Create Sucurity Group for Allow Accress Elasticache
-resource "aws_security_group" "elasticache_cluster_sg" {
+resource "aws_security_group" "redis_cluster_sg" {
   name        = "elasticache_cluster_sg"
   description = "Security group for mq-broker with 6379 ports open within VPC"
   vpc_id      = var.vpc_id
