@@ -1,24 +1,24 @@
 # Create Elasticache cluster
 resource "aws_elasticache_cluster" "elasticache_cluster" {
-  cluster_id           = "${local.prefix}-redis-dev"
+  cluster_id           = "${local.prefix}-redis-${var.environment}"
   engine               = "redis"
   node_type            = "cache.t4g.micro"
   num_cache_nodes      = 1
   parameter_group_name = "default.redis3.2"
   engine_version       = "3.2.10"
   port                 = 6379
-  security_group_ids = [aws_security_group.redis_cluster_sg.id]
+  security_group_ids   = [aws_security_group.redis_cluster_sg.id]
   subnet_group_name    = aws_elasticache_subnet_group.elasticache_cluster_subnet_group.name
 
 
   log_delivery_configuration {
     destination      = aws_cloudwatch_log_group.elasticache_cluster_log.name
     destination_type = "cloudwatch-logs"
-    log_format       = "text"
+    log_format       = "json"
     log_type         = "slow-log"
   }
   tags = merge(
-    { Name = "${local.prefix}-redis-dev" },
+    { Name = "${local.prefix}-redis-${var.environment}" },
     local.common_tags
   )
 }

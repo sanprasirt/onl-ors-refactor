@@ -4,7 +4,7 @@ locals {
     Service     = "onl"
     System      = "ors"
     Owner       = "cpall"
-    Environment = "dev"
+    Environment = var.environment
     Createby    = "TechEx created by terraform"
     SR          = "-"
     Project     = "refactor"

@@ -15,9 +15,13 @@
 #   availability_zone = "us-west-2a"
 # }
 
-# # Create ECS cluster
-# resource "aws_ecs_cluster" "my_cluster" {
-#   name = "my-ecs-cluster"
+# Create ECS cluster
+# resource "aws_ecs_cluster" "onl_ecs_cluster" {
+#   name = "${local.prefix}-ecs-cluster-${var.environment}"
+#   tags = merge(
+#     { Name = "${local.prefix}-ecs-cluster-${var.environment}" },
+#     local.common_tags
+#   )
 # }
 
 # # Create security group for the load balancer

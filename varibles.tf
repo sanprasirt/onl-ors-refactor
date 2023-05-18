@@ -25,3 +25,9 @@ variable "aws_app_subnets" {
   type        = list(string)
   default     = ["subnet-00c5c5986096d3d47", "subnet-061a3048328327918"]
 }
+
+variable "environment" {
+  description = "The evironment of resource"
+  type        = string
+  default     = "dev"
+}

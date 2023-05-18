@@ -1,5 +1,5 @@
 resource "aws_mq_broker" "rabbit_mq" {
-  broker_name = "${local.prefix}-rabbitmq-dev"
+  broker_name = "${local.prefix}-rabbitmq-${var.environment}"
 
   engine_type        = "RabbitMQ"
   engine_version     = "3.10.20"
@@ -13,7 +13,7 @@ resource "aws_mq_broker" "rabbit_mq" {
   }
 
   tags = merge(
-    { Name = "${local.prefix}-rabbitmq-dev" },
+    { Name = "${local.prefix}-rabbitmq-${var.environment}" },
     local.common_tags
   )
 }
