@@ -13,6 +13,11 @@ variable "aws_nonexpose_subnets" {
   default     = ["subnet-00357a44212cc845f", "subnet-03b61d2d30d62e4ce"]
 }
 
+variable "noneexpose_subnets_cidr_blocks" {
+  description = "The list of noneexpose subnets cidr blocks"
+  type        = list(string)
+  default     = ["100.64.0.0/18", "100.64.64.0/18"]
+}
 
 variable "aws_secure_subnets" {
   description = "The list of private subnets ids"
@@ -20,10 +25,22 @@ variable "aws_secure_subnets" {
   default     = ["subnet-0d348a10be7d17ec9", "subnet-0bb74d817ebb19227"]
 }
 
+variable "secure_subnets_cidr_blocks" {
+  description = "The list of secure subnets cidr blocks"
+  type        = list(string)
+  default     = ["172.19.205.192/27", "172.19.205.224/27"]
+}
+
 variable "aws_app_subnets" {
   description = "The list of private subnets ids"
   type        = list(string)
   default     = ["subnet-00c5c5986096d3d47", "subnet-061a3048328327918"]
+}
+
+variable "app_subnets_cidr_blocks" {
+  description = "The list of app subnets cidr blocks"
+  type        = list(string)
+  default     = ["172.19.205.128/27", "172.19.205.160/27"]
 }
 
 variable "environment" {

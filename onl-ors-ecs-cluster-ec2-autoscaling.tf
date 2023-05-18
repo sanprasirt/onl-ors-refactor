@@ -1,35 +1,39 @@
-provider "aws" {
-  region = local.region
-}
-
-data "aws_availability_zones" "available" {}
-
 locals {
-  region = "eu-west-1"
-  name   = "ex-${basename(path.cwd)}"
+  # name = "${local.prefix}-ecs-cluster-${var.environment}"
 
-  vpc_cidr = "10.0.0.0/16"
-  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  # vpc_cidr = "10.0.0.0/16"
+  # azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   container_name = "ecs-sample"
   container_port = 80
 
   tags = {
-    Name       = local.name
-    Example    = local.name
-    Repository = "https://github.com/terraform-aws-modules/terraform-aws-ecs"
+    Name    = local.name
+    Example = local.name
   }
 }
 
 ################################################################################
 # Cluster
+# Provision ECS Cluster using ec2 autoscaling group  
 ################################################################################
 
 module "ecs_cluster" {
-  source = "../../modules/cluster"
+  source  = "terraform-aws-modules/ecs/aws//modules/cluster"
+  version = "5.0.1"
 
-  cluster_name = local.name
+  create = false
 
+  cluster_name = "${local.prefix}-ecs-cluster-${var.environment}"
+
+  cluster_configuration = {
+    execute_command_configuration = {
+      logging = "OVERRIDE"
+      log_configuration = {
+        cloud_watch_log_group_name = "/aws/ecs/aws-ec2"
+      }
+    }
+  }
   # Capacity provider - autoscaling groups
   default_capacity_provider_use_fargate = false
   autoscaling_capacity_providers = {
@@ -50,33 +54,18 @@ module "ecs_cluster" {
         base   = 20
       }
     }
-    # Spot instances
-    ex-2 = {
-      auto_scaling_group_arn         = module.autoscaling["ex-2"].autoscaling_group_arn
-      managed_termination_protection = "ENABLED"
-
-      managed_scaling = {
-        maximum_scaling_step_size = 15
-        minimum_scaling_step_size = 5
-        status                    = "ENABLED"
-        target_capacity           = 90
-      }
-
-      default_capacity_provider_strategy = {
-        weight = 40
-      }
-    }
   }
 
-  tags = local.tags
+  tags = local.common_tags
 }
 
 ################################################################################
 # Service
 ################################################################################
-
+/*
 module "ecs_service" {
-  source = "../../modules/service"
+  source  = "terraform-aws-modules/ecs/aws//modules/service"
+  version = "5.0.1"
 
   # Service
   name        = local.name
@@ -144,7 +133,7 @@ module "ecs_service" {
   }
 
   tags = local.tags
-}
+}*/
 
 ################################################################################
 # Supporting Resources
@@ -159,34 +148,37 @@ module "alb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
 
-  name        = "${local.name}-service"
+  name        = "alb-service-sg"
   description = "Service security group"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress_rules       = ["http-80-tcp"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   egress_rules       = ["all-all"]
-  egress_cidr_blocks = module.vpc.private_subnets_cidr_blocks
+  egress_cidr_blocks = var.noneexpose_subnets_cidr_blocks
 
-  tags = local.tags
+
+  tags = local.common_tags
 }
+
+# Create Application LoadBalancer
 
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 8.0"
 
-  name = local.name
+  name = "${local.prefix}-alb-ecs-${var.environment}"
 
   load_balancer_type = "application"
-
-  vpc_id          = module.vpc.vpc_id
-  subnets         = module.vpc.public_subnets
-  security_groups = [module.alb_sg.security_group_id]
+  internal           = true
+  vpc_id             = var.vpc_id
+  subnets            = var.aws_app_subnets
+  security_groups    = [module.alb_sg.security_group_id]
 
   http_tcp_listeners = [
     {
-      port               = local.container_port
+      port               = 80
       protocol           = "HTTP"
       target_group_index = 0
     },
@@ -194,14 +186,17 @@ module "alb" {
 
   target_groups = [
     {
-      name             = "${local.name}-${local.container_name}"
+      name             = "${local.prefix}-tg-${var.environment}"
       backend_protocol = "HTTP"
-      backend_port     = local.container_port
+      backend_port     = 80
       target_type      = "ip"
     },
   ]
 
-  tags = local.tags
+  tags = merge({
+    Name = "${local.prefix}-alb-ecs-${var.environment}" },
+    local.common_tags
+  )
 }
 
 module "autoscaling" {
@@ -217,16 +212,16 @@ module "autoscaling" {
       user_data                  = <<-EOT
         #!/bin/bash
         cat <<'EOF' >> /etc/ecs/ecs.config
-        ECS_CLUSTER=${local.name}
+        ECS_CLUSTER=${local.prefix}-ecs-cluster-${var.environment}
         ECS_LOGLEVEL=debug
-        ECS_CONTAINER_INSTANCE_TAGS=${jsonencode(local.tags)}
+        ECS_CONTAINER_INSTANCE_TAGS=${jsonencode(local.common_tags)}
         ECS_ENABLE_TASK_IAM_ROLE=true
         EOF
       EOT
     }
   }
 
-  name = "${local.name}-${each.key}"
+  name = "${local.prefix}-ecs-cluster-${var.environment}-${each.key}"
 
   image_id      = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
   instance_type = each.value.instance_type
@@ -236,14 +231,14 @@ module "autoscaling" {
   ignore_desired_capacity_changes = true
 
   create_iam_instance_profile = true
-  iam_role_name               = local.name
-  iam_role_description        = "ECS role for ${local.name}"
+  iam_role_name               = "ecsInstanceRole"
+  iam_role_description        = "ECS role for ${local.prefix}-ecs-cluster-${var.environment}"
   iam_role_policies = {
     AmazonEC2ContainerServiceforEC2Role = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
     AmazonSSMManagedInstanceCore        = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 
-  vpc_zone_identifier = module.vpc.private_subnets
+  vpc_zone_identifier = var.aws_nonexpose_subnets
   health_check_type   = "EC2"
   min_size            = 1
   max_size            = 5
@@ -261,14 +256,17 @@ module "autoscaling" {
   use_mixed_instances_policy = each.value.use_mixed_instances_policy
   mixed_instances_policy     = each.value.mixed_instances_policy
 
-  tags = local.tags
+  tags = merge(
+    { Name = "${local.prefix}-asg-${var.environment}" },
+    local.common_tags
+  )
 }
 
 module "autoscaling_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
 
-  name        = local.name
+  name        = "${local.prefix}-asg-sg"
   description = "Autoscaling group security group"
   vpc_id      = var.vpc_id
 
