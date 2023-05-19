@@ -22,7 +22,7 @@ module "ecs_cluster" {
   source  = "terraform-aws-modules/ecs/aws//modules/cluster"
   version = "5.0.1"
 
-  create = false
+  # create = false
 
   cluster_name = "${local.prefix}-ecs-cluster-${var.environment}"
 
@@ -38,8 +38,8 @@ module "ecs_cluster" {
   default_capacity_provider_use_fargate = false
   autoscaling_capacity_providers = {
     # On-demand instances
-    ex-1 = {
-      auto_scaling_group_arn         = module.autoscaling["ex-1"].autoscaling_group_arn
+    asg-1 = {
+      auto_scaling_group_arn         = module.autoscaling["asg-1"].autoscaling_group_arn
       managed_termination_protection = "ENABLED"
 
       managed_scaling = {
@@ -75,8 +75,8 @@ module "ecs_service" {
   requires_compatibilities = ["EC2"]
   capacity_provider_strategy = {
     # On-demand instances
-    ex-1 = {
-      capacity_provider = module.ecs_cluster.autoscaling_capacity_providers["ex-1"].name
+    asg-1 = {
+      capacity_provider = module.ecs_cluster.autoscaling_capacity_providers["asg-1"].name
       weight            = 1
       base              = 1
     }
@@ -205,11 +205,10 @@ module "autoscaling" {
 
   for_each = {
     # On-demand instances
-    ex-1 = {
-      instance_type              = "t3.micro"
+    asg-1 = {
+      instance_type              = "t3.small"
       use_mixed_instances_policy = false
       mixed_instances_policy     = {}
-      key_name                   = file("/templates/key_name.pem")
       user_data                  = <<-EOT
         #!/bin/bash
         cat <<'EOF' >> /etc/ecs/ecs.config
@@ -226,7 +225,7 @@ module "autoscaling" {
 
   image_id                        = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
   instance_type                   = each.value.instance_type
-  key_name                        = each.value.key_name
+  key_name                        = "onlors-ecsdev"
   security_groups                 = [module.autoscaling_sg.security_group_id]
   user_data                       = base64encode(each.value.user_data)
   ignore_desired_capacity_changes = true
@@ -243,7 +242,7 @@ module "autoscaling" {
   health_check_type   = "EC2"
   min_size            = 1
   max_size            = 5
-  desired_capacity    = 2
+  desired_capacity    = 1
 
   # https://github.com/hashicorp/terraform-provider-aws/issues/12582
   autoscaling_group_tags = {
