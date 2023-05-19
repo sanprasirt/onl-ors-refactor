@@ -1,17 +1,17 @@
-locals {
-  # name = "${local.prefix}-ecs-cluster-${var.environment}"
+# locals {
+#   # name = "${local.prefix}-ecs-cluster-${var.environment}"
 
-  # vpc_cidr = "10.0.0.0/16"
-  # azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+#   # vpc_cidr = "10.0.0.0/16"
+#   # azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
-  container_name = "ecs-sample"
-  container_port = 80
+#   container_name = "ecs-sample"
+#   container_port = 80
 
-  tags = {
-    Name    = local.name
-    Example = local.name
-  }
-}
+#   tags = {
+#     Name    = local.name
+#     Example = local.name
+#   }
+# }
 
 ################################################################################
 # Cluster
@@ -252,7 +252,7 @@ module "autoscaling" {
 
   # Required for  managed_termination_protection = "ENABLED"
   protect_from_scale_in = true
-
+  health_check_grace_period = 30
   # Spot instances
   # use_mixed_instances_policy = each.value.use_mixed_instances_policy
   # mixed_instances_policy     = each.value.mixed_instances_policy
