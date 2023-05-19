@@ -209,6 +209,7 @@ module "autoscaling" {
       instance_type              = "t3.micro"
       use_mixed_instances_policy = false
       mixed_instances_policy     = {}
+      key_name                   = file("/templates/key_name.pem")
       user_data                  = <<-EOT
         #!/bin/bash
         cat <<'EOF' >> /etc/ecs/ecs.config
@@ -223,9 +224,9 @@ module "autoscaling" {
 
   name = "${local.prefix}-ecs-cluster-${var.environment}-${each.key}"
 
-  image_id      = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
-  instance_type = each.value.instance_type
-
+  image_id                        = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
+  instance_type                   = each.value.instance_type
+  key_name                        = each.value.key_name
   security_groups                 = [module.autoscaling_sg.security_group_id]
   user_data                       = base64encode(each.value.user_data)
   ignore_desired_capacity_changes = true
@@ -253,8 +254,8 @@ module "autoscaling" {
   protect_from_scale_in = true
 
   # Spot instances
-  use_mixed_instances_policy = each.value.use_mixed_instances_policy
-  mixed_instances_policy     = each.value.mixed_instances_policy
+  # use_mixed_instances_policy = each.value.use_mixed_instances_policy
+  # mixed_instances_policy     = each.value.mixed_instances_policy
 
   tags = merge(
     { Name = "${local.prefix}-asg-${var.environment}" },
