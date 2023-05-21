@@ -26,13 +26,13 @@ resource "aws_elasticache_cluster" "elasticache_cluster" {
 # Create Elasticache REDIS User
 resource "aws_elasticache_user" "elasticache_user" {
   user_id       = "onlorsdev"
-  user_name     = "onlorsdev"
+  user_name     = var.redis_username
   access_string = "on ~* +@all"
   engine        = "REDIS"
 
   authentication_mode {
     type      = "password"
-    passwords = ["gov3sl5iyEjezoreqaRo"]
+    passwords = [var.redis_password]
   }
 }
 

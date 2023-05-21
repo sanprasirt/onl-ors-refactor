@@ -48,3 +48,27 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+variable "mq_username" {
+  description = "MQ User name"
+  type = string
+  sensitive = true
+}
+
+variable "redis_username" {
+  description = "Redis User name"
+  type = string
+  sensitive = true
+}
+
+variable "mq_password" {
+  description = "MQ Password"
+  type = string
+  sensitive = true
+}
+
+variable "redis_password" {
+  description = "Redis Password"
+  type = string
+  sensitive = true
+}
