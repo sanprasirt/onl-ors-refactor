@@ -250,7 +250,7 @@ module "autoscaling" {
   }
 
   # Required for  managed_termination_protection = "ENABLED"
-  protect_from_scale_in = true
+  protect_from_scale_in     = true
   health_check_grace_period = 30
   # Spot instances
   # use_mixed_instances_policy = each.value.use_mixed_instances_policy
