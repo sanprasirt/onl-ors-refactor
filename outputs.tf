@@ -34,6 +34,10 @@ output "cluster_autoscaling_capacity_providers" {
   value       = module.ecs_cluster.autoscaling_capacity_providers
 }
 
+output "cluster_alb_target_group_arns" {
+  description = "Map of target group created and their attributes"
+  value       = module.alb.target_group_arns
+}
 # ################################################################################
 # # Service
 # ################################################################################
