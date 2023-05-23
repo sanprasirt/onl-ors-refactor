@@ -1,7 +1,7 @@
 # aws_ecr_repository.onl-ors-reserve:
 resource "aws_ecr_repository" "onl-ors-reserve" {
   image_tag_mutability = "MUTABLE"
-  name                 = "onl-ors-reserve"
+  name                 = "${local.prefix}-reserve"
   tags                 = local.common_tags
 
 

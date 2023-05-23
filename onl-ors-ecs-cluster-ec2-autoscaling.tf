@@ -175,7 +175,9 @@ module "alb" {
   vpc_id             = var.vpc_id
   subnets            = var.aws_app_subnets
   security_groups    = [module.alb_sg.security_group_id]
-
+  # access_logs = {
+  #   bucket = "${local.prefix}-alb-logs"
+  # }
   http_tcp_listeners = [
     {
       port               = 80
@@ -184,11 +186,38 @@ module "alb" {
     },
   ]
 
+  # HTTP Listener rules
+  http_tcp_listener_rules = [
+    {
+      http_listener_index = 0
+      priority            = 2
+
+      actions = [
+        {
+          type               = "forward"
+          target_group_index = 1
+        },
+      ]
+
+      conditions = [
+        {
+          path_patterns = ["/api/*"]
+        },
+      ]
+    },
+  ]
+
   target_groups = [
     {
-      name             = "${local.prefix}-tg-${var.environment}"
+      name             = "${local.prefix}-frontend-tg-${var.environment}"
       backend_protocol = "HTTP"
       backend_port     = 80
+      target_type      = "ip"
+    },
+    {
+      name             = "${local.prefix}-reserv-tg-${var.environment}"
+      backend_protocol = "HTTP"
+      backend_port     = 3000
       target_type      = "ip"
     },
   ]

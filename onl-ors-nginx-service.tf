@@ -17,9 +17,9 @@ resource "aws_ecs_service" "onl_ors_nginx_service" {
   task_definition = aws_ecs_task_definition.onl_ors_nginx_task.arn
 
   capacity_provider_strategy {
-    base              = 20
+    base              = 1 #20
     capacity_provider = "asg-1"
-    weight            = 60
+    weight            = 1 #60
   }
 
   deployment_circuit_breaker {
@@ -34,7 +34,7 @@ resource "aws_ecs_service" "onl_ors_nginx_service" {
   load_balancer {
     container_name   = "${local.prefix}-nginx-service"
     container_port   = 80
-    target_group_arn = module.alb.target_group_arns[0]
+    target_group_arn = element(module.alb.target_group_arns, 0)
     # target_group_arn = "arn:aws:elasticloadbalancing:ap-southeast-1:802791533053:targetgroup/onl-ors-tg-dev/5696cab485a17f7c"
   }
 
@@ -59,5 +59,4 @@ resource "aws_ecs_service" "onl_ors_nginx_service" {
     field = "instanceId"
     type  = "spread"
   }
-
 }

@@ -38,6 +38,11 @@ output "cluster_alb_target_group_arns" {
   description = "Map of target group created and their attributes"
   value       = module.alb.target_group_arns
 }
+
+output "cluster_alb_dns_name" {
+  description = "Map of ALB access alb dns"
+  value       = module.alb.lb_dns_name
+}
 # ################################################################################
 # # Service
 # ################################################################################
