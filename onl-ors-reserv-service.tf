@@ -12,10 +12,12 @@ resource "aws_ecs_service" "onl_ors_reserv_service" {
     { Name = "${local.prefix}-reserv-service" },
     local.common_tags
   )
-  # task_definition = aws_ecs_task_definition.onl_ors_reserv_task.arn
+  task_definition = aws_ecs_task_definition.onl_ors_reserv_task.arn
   # Update for not conflic with aws pipeline
-  task_definition = "arn:aws:ecs:ap-southeast-1:802791533053:task-definition/onl-ors-reserv-service:2"
-
+  # task_definition = "arn:aws:ecs:ap-southeast-1:802791533053:task-definition/onl-ors-reserv-service:2"
+  lifecycle {
+    ignore_changes = [desired_count, task_definition]
+  }
   capacity_provider_strategy {
     base              = 1
     capacity_provider = "asg-1"
