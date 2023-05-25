@@ -8,4 +8,7 @@ resource "aws_ecr_repository" "onl-ors-reserve" {
   image_scanning_configuration {
     scan_on_push = false
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
