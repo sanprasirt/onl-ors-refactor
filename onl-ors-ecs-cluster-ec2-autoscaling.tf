@@ -46,7 +46,7 @@ module "ecs_cluster" {
         maximum_scaling_step_size = 5
         minimum_scaling_step_size = 1
         status                    = "ENABLED"
-        target_capacity           = 60
+        target_capacity           = 90
       }
 
       default_capacity_provider_strategy = {
@@ -202,7 +202,7 @@ module "alb" {
 
       conditions = [
         {
-          path_patterns = ["/api/*"]
+          path_patterns = ["/reserve/*"]
         },
       ]
     },
@@ -214,12 +214,28 @@ module "alb" {
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "ip"
+      health_check = {
+        path                = "/"
+        interval            = 30
+        timeout             = 5
+        healthy_threshold   = 5
+        unhealthy_threshold = 2
+        matcher             = "200"
+      }
     },
     {
       name             = "${local.prefix}-reserv-tg-${var.environment}"
       backend_protocol = "HTTP"
       backend_port     = 3000
       target_type      = "ip"
+      health_check = {
+        path                = "/health"
+        interval            = 30
+        timeout             = 5
+        healthy_threshold   = 5
+        unhealthy_threshold = 2
+        matcher             = "200"
+      }
     },
   ]
 
@@ -236,7 +252,7 @@ module "autoscaling" {
   for_each = {
     # On-demand instances
     asg-1 = {
-      instance_type              = "t3.micro"
+      instance_type              = "t2.small"
       use_mixed_instances_policy = false
       mixed_instances_policy     = {}
       user_data                  = <<-EOT
@@ -295,11 +311,14 @@ module "autoscaling" {
 module "autoscaling_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
+  
 
   name        = "${local.prefix}-asg-sg"
   description = "Autoscaling group security group"
   vpc_id      = var.vpc_id
-
+  
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_rules = [ "ssh-tcp" ]
   computed_ingress_with_source_security_group_id = [
     {
       rule                     = "http-80-tcp"
