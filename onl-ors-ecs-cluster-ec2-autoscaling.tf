@@ -164,6 +164,7 @@ module "alb" {
   # access_logs = {
   #   bucket = "${local.prefix}-alb-logs"
   # }
+
   http_tcp_listeners = [
     {
       port               = 80
@@ -173,55 +174,38 @@ module "alb" {
   ]
 
   # HTTP Listener rules
-  http_tcp_listener_rules = [
-    {
-      http_listener_index = 0
-      priority            = 2
+  # http_tcp_listener_rules = [
+  #   {
+  #     http_listener_index = 0
+  #     priority            = 2
 
-      actions = [
-        {
-          type               = "forward"
-          target_group_index = 1
-        },
-      ]
+  #     actions = [
+  #       {
+  #         type               = "forward"
+  #         target_group_index = 1
+  #       },
+  #     ]
+  #     conditions = [
+  #       {
+  #         path_patterns = ["/reserve/*"]
+  #       },
 
-      conditions = [
-        {
-          path_patterns = ["/reserve/*"]
-        },
-      ]
-    },
-  ]
+  #     ]
+  #   },
+  # ]
 
   target_groups = [
-    {
-      name             = "${local.prefix}-frontend-tg-${var.environment}"
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "ip"
-      health_check = {
-        path                = "/"
-        interval            = 30
-        timeout             = 5
-        healthy_threshold   = 5
-        unhealthy_threshold = 2
-        matcher             = "200"
-      }
-    },
-    {
-      name             = "${local.prefix}-reserv-tg-${var.environment}"
-      backend_protocol = "HTTP"
-      backend_port     = 3000
-      target_type      = "ip"
-      health_check = {
-        path                = "/health"
-        interval            = 30
-        timeout             = 5
-        healthy_threshold   = 5
-        unhealthy_threshold = 2
-        matcher             = "200"
-      }
-    },
+    for idx, target_group in local.target_groups : {
+      name             = target_group.name
+      backend_protocol = target_group.backend_protocol
+      backend_port     = target_group.backend_port
+      target_type      = target_group.target_type
+      health_check     = target_group.health_check
+      tags = merge({
+        Name = target_group.name },
+        local.common_tags
+      )
+    }
   ]
 
   tags = merge({

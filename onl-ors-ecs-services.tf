@@ -1,27 +1,28 @@
-# aws_ecs_service.onl_ors_reserv_service:
-resource "aws_ecs_service" "onl_ors_reserv_service" {
+# Create aws_ecs_service
+resource "aws_ecs_service" "onl_ors_services" {
+  for_each                           = toset(local.services_expose)
   cluster                            = module.ecs_cluster.arn
   deployment_maximum_percent         = 200
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1
   enable_ecs_managed_tags            = true
   health_check_grace_period_seconds  = 0
-  name                               = "${local.prefix}-reserv-service"
+  name                               = "${local.prefix}-${each.key}-service"
   scheduling_strategy                = "REPLICA"
   tags = merge(
-    { Name = "${local.prefix}-reserv-service" },
+    { Name = "${local.prefix}-${each.key}-service" },
     local.common_tags
   )
-  task_definition = aws_ecs_task_definition.onl_ors_reserv_task.arn
+  task_definition = aws_ecs_task_definition.onl_ors_tasks[each.key].arn
   # Update for not conflic with aws pipeline
-  # task_definition = "arn:aws:ecs:ap-southeast-1:802791533053:task-definition/onl-ors-reserv-service:2"
+  # task_definition = "arn:aws:ecs:ap-southeast-1:802791533053:task-definition/onl-ors-${each.key}-service:2"
   lifecycle {
     ignore_changes = [desired_count, task_definition]
   }
   capacity_provider_strategy {
-    base              = 1
+    base              = 20
     capacity_provider = "asg-1"
-    weight            = 1
+    weight            = 60
   }
 
   deployment_circuit_breaker {
@@ -34,9 +35,10 @@ resource "aws_ecs_service" "onl_ors_reserv_service" {
   }
 
   load_balancer {
-    container_name   = "${local.prefix}-reserv-service"
+    container_name   = "${local.prefix}-${each.key}-service"
     container_port   = 3000
-    target_group_arn = element(module.alb.target_group_arns, 1)
+    # target_group_arn = element(module.alb.target_group_arns, 1)
+    target_group_arn =  module.alb.target_group_arns[index(local.services_expose, each.value) + 1]
   }
 
   network_configuration {

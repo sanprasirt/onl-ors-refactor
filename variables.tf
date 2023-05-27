@@ -72,3 +72,21 @@ variable "redis_password" {
   type        = string
   sensitive   = true
 }
+variable "repo_url" {
+  description = "The url of ECR repository"
+  type        = string
+  default     = "802791533053.dkr.ecr.ap-southeast-1.amazonaws.com"
+}
+variable "services_name" {
+  description = "The name of service"
+  type        = list(string)
+  default = [
+    "reserve",
+    "search",
+    "receive",
+    "confirm",
+    "cancel",
+    "mq-consumer",
+    "mq-consumer-product",
+  ]
+}
