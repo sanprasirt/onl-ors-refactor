@@ -40,3 +40,46 @@ resource "aws_ecr_repository" "onl-ors-cancel" {
     create_before_destroy = true
   }
 }
+
+resource "aws_ecr_repository" "onl-ors-search" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-search"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_ecr_repository" "onl-ors-confirm" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-confirm"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+resource "aws_ecr_repository" "onl-ors-webapp" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-webapp"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
