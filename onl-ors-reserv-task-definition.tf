@@ -1,15 +1,15 @@
 resource "aws_ecs_task_definition" "onl_ors_reserv_task" {
   family             = "${local.prefix}-reserv-service"
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  memory             = 1024
-  cpu                = 512
+  memory             = 512
+  cpu                = 256
   network_mode       = "awsvpc"
   container_definitions = jsonencode([
     {
       name      = "${local.prefix}-reserv-service"
       image     = "${aws_ecr_repository.onl-ors-reserve.repository_url}:latest"
-      cpu       = 512
-      memory    = 1024
+      cpu       = 256
+      memory    = 512
       essential = true
       portMappings = [
         {

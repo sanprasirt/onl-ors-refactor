@@ -46,7 +46,7 @@ module "ecs_cluster" {
         maximum_scaling_step_size = 5
         minimum_scaling_step_size = 1
         status                    = "ENABLED"
-        target_capacity           = 90
+        target_capacity           = 50
       }
 
       default_capacity_provider_strategy = {
@@ -317,8 +317,8 @@ module "autoscaling_sg" {
   description = "Autoscaling group security group"
   vpc_id      = var.vpc_id
 
-  ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["ssh-tcp"]
+  # ingress_cidr_blocks = ["0.0.0.0/0"]
+  # ingress_rules       = ["ssh-tcp"]
   computed_ingress_with_source_security_group_id = [
     {
       rule                     = "http-80-tcp"
