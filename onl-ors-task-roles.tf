@@ -1,6 +1,7 @@
 # Create Role execution tasks
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole"
+  for_each = var.services_name
+  name     = "${each.key}TaskExecutionRole"
 
   assume_role_policy = <<EOF
     {
@@ -32,6 +33,7 @@ EOF
 # }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
-  role       = aws_iam_role.ecs_task_execution_role.name
+  for_each   = var.services_name
+  role       = aws_iam_role.ecs_task_execution_role[each.key].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }

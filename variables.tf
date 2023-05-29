@@ -79,14 +79,54 @@ variable "repo_url" {
 }
 variable "services_name" {
   description = "The name of service"
-  type        = list(string)
-  default = [
-    "reserve",
-    "search",
-    "receive",
-    "confirm",
-    "cancel",
-    "mq-consumer",
-    "mq-consumer-product",
-  ]
+  type        = map(any)
+  default = {
+    # webapp = {
+    #   port                    = 8080,
+    #   cpu                     = 256,
+    #   memory                  = 512,
+    # },
+    reserve = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    search = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    receive = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    confirm = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    cancel = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    mq-consumer = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+    mq-consumer-product = {
+      port          = 3000,
+      variable_port = "3000"
+      cpu           = 256,
+      memory        = 512,
+    },
+  }
 }

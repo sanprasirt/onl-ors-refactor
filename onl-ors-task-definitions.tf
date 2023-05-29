@@ -1,7 +1,7 @@
 resource "aws_ecs_task_definition" "onl_ors_tasks" {
-  for_each                 = toset(var.services_name)
+  for_each                 = var.services_name
   family                   = "${local.prefix}-${each.key}-service"
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role[each.key].arn
   memory                   = 512
   cpu                      = 256
   network_mode             = "awsvpc"
@@ -10,19 +10,19 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
     {
       name      = "${local.prefix}-${each.key}-service"
       image     = "${var.repo_url}/onl-ors-${each.key}:latest"
-      cpu       = 256
-      memory    = 512
+      cpu       = each.value.cpu
+      memory    = each.value.memory
       essential = true
       portMappings = [
         {
-          containerPort = 3000
-          hostPort      = 3000
+          containerPort = each.value.port
+          hostPort      = each.value.port
         }
       ],
       environment : [
         {
           "name" : "PORT",
-          "value" : "3000"
+          "value" : each.value.variable_port
         }
       ],
       logConfiguration : {
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
       },
     }
   ])
-
+  depends_on = [aws_iam_role.ecs_task_execution_role]
   tags = merge(
     local.common_tags,
     {

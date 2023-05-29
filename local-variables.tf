@@ -16,7 +16,7 @@ locals {
     "confirm",
     "cancel",
   ]
-  
+
   target_groups = [
     {
       name             = "${local.prefix}-frontend-tg-${var.environment}"
