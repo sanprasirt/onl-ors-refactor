@@ -2,8 +2,8 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
   for_each                 = var.services_name
   family                   = "${local.prefix}-${each.key}-service"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role[each.key].arn
-  memory                   = 512
-  cpu                      = 256
+  memory                   = each.value.memory
+  cpu                      = each.value.cpu
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   container_definitions = jsonencode([

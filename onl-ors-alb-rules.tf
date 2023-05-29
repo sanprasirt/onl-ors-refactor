@@ -1,3 +1,18 @@
+resource "aws_lb_listener_rule" "onl_ors_webapp_rule" {
+  #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
+  listener_arn = module.alb.http_tcp_listener_arns[0]
+  priority     = 99
+  action {
+    type             = "forward"
+    target_group_arn = module.alb.target_group_arns[0]
+  }
+  condition {
+    path_pattern {
+      values = ["/ORS2_POS_CLIENT47/*"]
+    }
+  }
+  depends_on = [module.alb.http_tcp_listener_arns]
+}
 resource "aws_lb_listener_rule" "onl_ors_reserve_rule" {
   #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
   listener_arn = module.alb.http_tcp_listener_arns[0]

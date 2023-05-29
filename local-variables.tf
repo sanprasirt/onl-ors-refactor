@@ -9,19 +9,38 @@ locals {
     SR          = "-"
     Project     = "refactor"
   }
-  services_expose = [
-    "reserve",
-    "search",
-    "receive",
-    "confirm",
-    "cancel",
-  ]
+  services_expose = {
+    webapp = {
+      container_port = 8080,
+      target         = 0
+    },
+    reserve = {
+      container_port = 3000,
+      target         = 1
+    },
+    search = {
+      container_port = 3000,
+      target         = 2
+    },
+    receive = {
+      container_port = 3000,
+      target         = 3
+    },
+    confirm = {
+      container_port = 3000,
+      target         = 4
+    },
+    cancel = {
+      container_port = 3000,
+      target         = 5
+    },
+  }
 
   target_groups = [
     {
-      name             = "${local.prefix}-frontend-tg-${var.environment}"
+      name             = "${local.prefix}-webapp-tg-${var.environment}"
       backend_protocol = "HTTP"
-      backend_port     = 80
+      backend_port     = 8080
       target_type      = "ip"
       health_check = {
         path                = "/"
