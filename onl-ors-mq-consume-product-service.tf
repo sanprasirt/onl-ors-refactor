@@ -1,18 +1,18 @@
 # aws_ecs_service.onl_ors_mq-consumer_service:
-resource "aws_ecs_service" "onl_ors_mq_consumer_service" {
+resource "aws_ecs_service" "onl_ors_mq_consumer_product_service" {
   cluster                            = module.ecs_cluster.arn
   deployment_maximum_percent         = 200
   deployment_minimum_healthy_percent = 100
   desired_count                      = 1
   enable_ecs_managed_tags            = true
   health_check_grace_period_seconds  = 0
-  name                               = "${local.prefix}-mq-consumer-service"
+  name                               = "${local.prefix}-mq-consumer-product-service"
   scheduling_strategy                = "REPLICA"
   tags = merge(
-    { Name = "${local.prefix}-mq-consumer-service" },
+    { Name = "${local.prefix}-mq-consumer-product-service" },
     local.common_tags
   )
-  task_definition = aws_ecs_task_definition.onl_ors_tasks["mq-consumer"].arn
+  task_definition = aws_ecs_task_definition.onl_ors_tasks["mq-consumer-product"].arn
   # Update for not conflic with aws pipeline
   # task_definition = "arn:aws:ecs:ap-southeast-1:802791533053:task-definition/onl-ors-mq-consumer-service:2"
   lifecycle {

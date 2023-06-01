@@ -23,7 +23,43 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
         {
           "name" : "PORT",
           "value" : each.value.variable_port
-        }
+        },
+        {
+          "name" : "MQ_HOSTNAME",
+          "value" : aws_mq_broker.rabbit_mq.instances.0.endpoints.0
+        },
+        {
+          "name" : "MQ_USERNAME",
+          "value" : var.mq_username
+        },
+        {
+          "name" : "MQ_PASSWORD",
+          "value" : var.mq_password
+        },
+        {
+          "name": "DB_CONNECTION_STRING",
+          "value": var.db_connection_string
+        },
+        {
+          "name": "DB_USERNAME",
+          "value": var.db_username
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": var.db_password
+        },
+        {
+          "name": "REDIS_HOST",
+          "value": aws_elasticache_cluster.elasticache_cluster.cache_nodes.0.address
+        },
+        {
+          "name": "REDIS_USERNAME",
+          "value": var.redis_username
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "value": var.redis_password
+          }
       ],
       logConfiguration : {
         logDriver : "awslogs",

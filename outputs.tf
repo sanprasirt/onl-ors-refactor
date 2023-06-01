@@ -5,6 +5,17 @@
 #   description = "API Gateway Endpoint"
 # }
 
+# MQ Broker url
+output "onl_ors_mq_broker_url" {
+  value       = aws_mq_broker.rabbit_mq.instances.0.endpoints.0
+  description = "MQ Broker url"
+}
+
+output "onl_ors_cache_url" {
+  value       = aws_elasticache_cluster.elasticache_cluster.cache_nodes.0.address
+  description = "ElasticCache Redis url"
+}
+
 ################################################################################
 # ECR Repo 
 ################################################################################
