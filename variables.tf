@@ -49,6 +49,11 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "mq_host_with_port" {
+  description = "MQ Hostname"
+  type        = string
+  sensitive   = true
+}
 variable "mq_username" {
   description = "MQ User name"
   type        = string
@@ -134,13 +139,13 @@ variable "services_name" {
       cpu           = 256,
       memory        = 512,
     },
-    mq-consumer = {
+    mq-consume = {
       port          = 3000,
       variable_port = "3000",
       cpu           = 256,
       memory        = 512,
     },
-    mq-consumer-product = {
+    mq-consume-product = {
       port          = 3000,
       variable_port = "3000",
       cpu           = 256,

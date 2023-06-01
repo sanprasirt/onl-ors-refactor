@@ -7,7 +7,7 @@
 
 # MQ Broker url
 output "onl_ors_mq_broker_url" {
-  value       = aws_mq_broker.rabbit_mq.instances.0.endpoints.0
+  value       = aws_mq_broker.rabbit_mq.instances.0.ip_address
   description = "MQ Broker url"
 }
 
