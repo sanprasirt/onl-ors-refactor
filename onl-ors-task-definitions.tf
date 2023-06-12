@@ -59,6 +59,10 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
         {
           "name" : "REDIS_PASSWORD",
           "value" : var.redis_password
+        },
+        {
+          "name": "NODE_VERSION",
+          "value": "20"
         }
       ],
       logConfiguration : {
@@ -79,4 +83,7 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
       Name = "${local.prefix}-${each.key}-service"
     }
   )
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
 }

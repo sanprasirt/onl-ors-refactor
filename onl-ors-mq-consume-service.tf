@@ -1,8 +1,9 @@
 # aws_ecs_service.onl_ors_mq-consumer_service:
+
 resource "aws_ecs_service" "onl_ors_mq_consume_service" {
   cluster                            = module.ecs_cluster.arn
   deployment_maximum_percent         = 200
-  deployment_minimum_healthy_percent = 100
+  deployment_minimum_healthy_percent = 50
   desired_count                      = 1
   enable_ecs_managed_tags            = true
   health_check_grace_period_seconds  = 0
