@@ -32,13 +32,6 @@ resource "aws_elasticache_cluster" "elasticache_cluster" {
 #   
 # }
 
-#  Create Cloudwatch log groups
-resource "aws_cloudwatch_log_group" "elasticache_cluster_log" {
-  name              = "/aws/elasticache/${local.prefix}-redis-dev"
-  retention_in_days = 30
-  tags              = local.common_tags
-}
-
 # Create subnet group
 resource "aws_elasticache_subnet_group" "elasticache_cluster_subnet_group" {
   name       = "${local.prefix}-redis-subnet-group"
