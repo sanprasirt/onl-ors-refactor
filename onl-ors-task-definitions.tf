@@ -61,8 +61,8 @@ resource "aws_ecs_task_definition" "onl_ors_tasks" {
           "value" : var.redis_password
         },
         {
-          "name": "NODE_VERSION",
-          "value": "20"
+          "name" : "NODE_VERSION",
+          "value" : "20"
         }
       ],
       logConfiguration : {

@@ -229,7 +229,7 @@ module "autoscaling" {
   for_each = {
     # On-demand instances
     asg-1 = {
-      instance_type              = "t2.small"
+      instance_type              = "t3.large"
       use_mixed_instances_policy = false
       mixed_instances_policy     = {}
       user_data                  = <<-EOT
@@ -264,7 +264,7 @@ module "autoscaling" {
   vpc_zone_identifier = var.aws_nonexpose_subnets
   health_check_type   = "EC2"
   min_size            = 1
-  max_size            = 4
+  max_size            = 5
   desired_capacity    = 1
 
   # https://github.com/hashicorp/terraform-provider-aws/issues/12582

@@ -35,36 +35,12 @@ resource "aws_apigatewayv2_integration" "apigw_integration" {
 
 # Create the API route with proxy method
 resource "aws_apigatewayv2_route" "apigw_route" {
-  for_each = toset(["ORS2_POS_CLIENT47", "reserve", "confirm", "search", "receive", "cancel"])
+  for_each   = toset(["ORS2_POS_CLIENT47", "reserve", "confirm", "search", "receive", "cancel"])
   api_id     = aws_apigatewayv2_api.apigw_http_endpoint.id
   route_key  = "ANY /${each.key}/{proxy+}"
   target     = "integrations/${aws_apigatewayv2_integration.apigw_integration.id}"
   depends_on = [aws_apigatewayv2_integration.apigw_integration]
 }
-
-# Create the API route with ANY /reserve/{*} method
-# resource "aws_apigatewayv2_route" "apigw_route_reserve" {
-#   api_id     = aws_apigatewayv2_api.apigw_http_endpoint.id
-#   route_key  = "ANY /reserve/{proxy+}"
-#   target     = "integrations/${aws_apigatewayv2_integration.apigw_integration.id}"
-#   depends_on = [aws_apigatewayv2_integration.apigw_integration]
-# }
-
-# # Create the API route with ANY /confirm/{proxy+} method
-# resource "aws_apigatewayv2_route" "apigw_route_confirm" {
-#   api_id     = aws_apigatewayv2_api.apigw_http_endpoint.id
-#   route_key  = "ANY /confirm/{proxy+}"
-#   target     = "integrations/${aws_apigatewayv2_integration.apigw_integration.id}"
-#   depends_on = [aws_apigatewayv2_integration.apigw_integration]
-# }
-
-# # Create the API route with ANY /search/{proxy+} method
-# resource "aws_apigatewayv2_route" "apigw_route_search" {
-#   api_id     = aws_apigatewayv2_api.apigw_http_endpoint.id
-#   route_key  = "ANY /search/{proxy+}"
-#   target     = "integrations/${aws_apigatewayv2_integration.apigw_integration.id}"
-#   depends_on = [aws_apigatewayv2_integration.apigw_integration]
-# }
 
 # Create API Gateway HTTP API JWT Authorizer
 # resource "aws_apigatewayv2_authorizer" "apigw_auth" {
@@ -85,10 +61,16 @@ resource "aws_apigatewayv2_stage" "apigw_stage" {
   auto_deploy = true
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_log.arn
-    format = "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
+    format          = "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
   }
-  
-  depends_on  = [aws_apigatewayv2_api.apigw_http_endpoint]
+  # default_route_settings {
+  #   detailed_metrics_enabled = true
+  #   logging_level            = "INFO"
+  #   throttling_burst_limit   = 5000
+  #   throttling_rate_limit    = 10000
+  # }
+
+  depends_on = [aws_apigatewayv2_api.apigw_http_endpoint]
 }
 
 # # Create the VPC Link configured with the private subnets. Security groups are kept empty here, but can be configured as required.
