@@ -49,34 +49,6 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "mq_host_with_port" {
-  description = "MQ Hostname"
-  type        = string
-  sensitive   = true
-}
-variable "mq_username" {
-  description = "MQ User name"
-  type        = string
-  sensitive   = true
-}
-
-variable "redis_username" {
-  description = "Redis User name"
-  type        = string
-  sensitive   = true
-}
-
-variable "mq_password" {
-  description = "MQ Password"
-  type        = string
-  sensitive   = true
-}
-
-variable "redis_password" {
-  description = "Redis Password"
-  type        = string
-  sensitive   = true
-}
 variable "db_connection_string" {
   description = "DB Hostname"
   type        = string
@@ -98,58 +70,4 @@ variable "repo_url" {
   description = "The url of ECR repository"
   type        = string
   default     = "802791533053.dkr.ecr.ap-southeast-1.amazonaws.com"
-}
-variable "services_name" {
-  description = "The name of service"
-  type        = map(any)
-  default = {
-    webapp = {
-      port          = 8080,
-      variable_port = "8080",
-      cpu           = 512,
-      memory        = 1024,
-    },
-    reserve = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    search = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    receive = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    confirm = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    cancel = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    mq-consume = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-    mq-consume-product = {
-      port          = 3000,
-      variable_port = "3000",
-      cpu           = 256,
-      memory        = 512,
-    },
-  }
 }

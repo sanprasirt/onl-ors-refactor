@@ -2,7 +2,7 @@
 resource "aws_elasticache_cluster" "elasticache_cluster" {
   cluster_id           = "${local.prefix}-redis-${var.environment}"
   engine               = "redis"
-  node_type            = "cache.t4g.micro"
+  node_type            = var.cache_instance_types[var.environment]
   num_cache_nodes      = 1
   parameter_group_name = "default.redis7"
   engine_version       = "7.0"

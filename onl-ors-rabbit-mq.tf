@@ -2,8 +2,8 @@ resource "aws_mq_broker" "rabbit_mq" {
   broker_name = "${local.prefix}-rabbitmq-${var.environment}"
 
   engine_type        = "RabbitMQ"
-  engine_version     = "3.10.20"
-  host_instance_type = "mq.t3.micro"
+  engine_version     = var.engine_version
+  host_instance_type = var.mq_instance_types[var.environment]
   security_groups    = [aws_security_group.rabbit_mq_sg.id]
   subnet_ids         = ["subnet-00c5c5986096d3d47"]
 
