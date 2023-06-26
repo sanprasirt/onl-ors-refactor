@@ -1,5 +1,4 @@
 resource "aws_lb_listener_rule" "onl_ors_webapp_rule" {
-  #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
   listener_arn = module.alb.http_tcp_listener_arns[0]
   priority     = 99
   action {
@@ -84,6 +83,22 @@ resource "aws_lb_listener_rule" "onl_ors_cancel_rule" {
   condition {
     path_pattern {
       values = ["/cancel/*"]
+    }
+  }
+  depends_on = [module.alb.http_tcp_listener_arns]
+}
+
+resource "aws_lb_listener_rule" "onl_ors_webmonitor_rule" {
+  #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
+  listener_arn = module.alb.http_tcp_listener_arns[0]
+  priority     = 105
+  action {
+    type             = "forward"
+    target_group_arn = module.alb.target_group_arns[6]
+  }
+  condition {
+    path_pattern {
+      values = ["/onl-ors-webmonitor/*"]
     }
   }
   depends_on = [module.alb.http_tcp_listener_arns]

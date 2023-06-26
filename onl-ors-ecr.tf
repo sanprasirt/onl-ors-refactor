@@ -108,3 +108,17 @@ resource "aws_ecr_repository" "onl-ors-mq-consume-product" {
     create_before_destroy = true
   }
 }
+
+resource "aws_ecr_repository" "onl-ors-webmonitor" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-webmonitor"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}

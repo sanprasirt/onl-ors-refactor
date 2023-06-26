@@ -9,7 +9,7 @@ variable "ecs_instance_types" {
 }
 
 variable "services_name" {
-  description = "The name of service"
+  description = "Define Tasks for the name of service"
   type        = map(any)
   default = {
     webapp = {
@@ -59,6 +59,12 @@ variable "services_name" {
       variable_port = "3000",
       cpu           = 256,
       memory        = 512,
+    },
+    webmonitor = {
+      port          = 8080,
+      variable_port = "8080",
+      cpu           = 512,
+      memory        = 1024,
     },
   }
 }

@@ -35,9 +35,10 @@ resource "aws_apigatewayv2_integration" "apigw_integration" {
 
 # Create the API route with proxy method
 resource "aws_apigatewayv2_route" "apigw_route" {
-  for_each   = toset(["ORS2_POS_CLIENT47", "reserve", "confirm", "search", "receive", "cancel"])
+  # for_each   = toset(["ORS2_POS_CLIENT47", "reserve", "confirm", "search", "receive", "cancel", "webmonitor"])
+  for_each = local.services_expose
   api_id     = aws_apigatewayv2_api.apigw_http_endpoint.id
-  route_key  = "ANY /${each.key}/{proxy+}"
+  route_key  = "ANY ${each.value.route}/{proxy+}"
   target     = "integrations/${aws_apigatewayv2_integration.apigw_integration.id}"
   depends_on = [aws_apigatewayv2_integration.apigw_integration]
 }
