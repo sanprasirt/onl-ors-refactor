@@ -1,4 +1,20 @@
 # aws_ecr_repository.onl-ors-reserve:
+
+locals {
+  ecr_repos = [
+    "onl-ors-reserve",
+    "onl-ors-receive",
+    "onl-ors-cancel",
+    "onl-ors-search",
+    "onl-ors-confirm",
+    "onl-ors-webapp",
+    "onl-ors-mq-consume",
+    "onl-ors-mq-consume-product",
+    "onl-ors-webmonitor",
+    "onl-ors-printscreport",
+    "onl-ors-screport"
+  ]
+}
 resource "aws_ecr_repository" "onl-ors-reserve" {
   image_tag_mutability = "MUTABLE"
   name                 = "${local.prefix}-reserve"
@@ -112,6 +128,33 @@ resource "aws_ecr_repository" "onl-ors-mq-consume-product" {
 resource "aws_ecr_repository" "onl-ors-webmonitor" {
   image_tag_mutability = "MUTABLE"
   name                 = "${local.prefix}-webmonitor"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_ecr_repository" "onl-ors-printscreport" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-printscreport"
+  tags                 = local.common_tags
+
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+resource "aws_ecr_repository" "onl-ors-screport" {
+  image_tag_mutability = "MUTABLE"
+  name                 = "${local.prefix}-screport"
   tags                 = local.common_tags
 
 

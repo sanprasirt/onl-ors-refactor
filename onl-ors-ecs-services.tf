@@ -4,7 +4,7 @@ resource "aws_ecs_service" "onl_ors_services" {
   for_each                           = local.services_expose
   cluster                            = module.ecs_cluster.arn
   deployment_maximum_percent         = 200
-  deployment_minimum_healthy_percent = 50
+  deployment_minimum_healthy_percent = 100
   desired_count                      = 1
   enable_ecs_managed_tags            = true
   health_check_grace_period_seconds  = 0
@@ -56,8 +56,14 @@ resource "aws_ecs_service" "onl_ors_services" {
     field = "attribute:ecs.availability-zone"
     type  = "spread"
   }
+  # ordered_placement_strategy {
+  #   field = "instanceId"
+  #   type  = "spread"
+  # }
   ordered_placement_strategy {
-    field = "instanceId"
-    type  = "spread"
+    field = "memory"
+    type  = "binpack"
   }
+
+  depends_on = [ module.alb, aws_ecs_task_definition.onl_ors_tasks, aws_iam_role.ecs_task_execution_role]
 }

@@ -2,8 +2,8 @@ variable "ecs_instance_types" {
   description = "The type of EC2 instance to launch"
   type        = map(string)
   default = {
-    dev   = "t3.large"
-    stage = "t3.xlarge"
+    dev   = "t3.small"
+    stage = "c5.xlarge"
     prod  = "m4.large"
   }
 }
@@ -15,8 +15,8 @@ variable "services_name" {
     webapp = {
       port          = 8080,
       variable_port = "8080",
-      cpu           = 512,
-      memory        = 1024,
+      cpu           = 256,
+      memory        = 512,
     },
     reserve = {
       port          = 3000,
@@ -63,8 +63,20 @@ variable "services_name" {
     webmonitor = {
       port          = 8080,
       variable_port = "8080",
-      cpu           = 512,
-      memory        = 1024,
+      cpu           = 256,
+      memory        = 512,
+    },
+    printscreport = {
+      port          = 8080,
+      variable_port = "8080",
+      cpu           = 256,
+      memory        = 512,
+    },
+    screport = {
+      port          = 8080,
+      variable_port = "8080",
+      cpu           = 256,
+      memory        = 512,
     },
   }
 }

@@ -12,6 +12,7 @@ resource "aws_lb_listener_rule" "onl_ors_webapp_rule" {
   }
   depends_on = [module.alb.http_tcp_listener_arns]
 }
+
 resource "aws_lb_listener_rule" "onl_ors_reserve_rule" {
   #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
   listener_arn = module.alb.http_tcp_listener_arns[0]
@@ -89,7 +90,6 @@ resource "aws_lb_listener_rule" "onl_ors_cancel_rule" {
 }
 
 resource "aws_lb_listener_rule" "onl_ors_webmonitor_rule" {
-  #   for_each     = toset(["reserve", "search", "receive", "confirm", "cancel"])
   listener_arn = module.alb.http_tcp_listener_arns[0]
   priority     = 105
   action {
@@ -98,7 +98,37 @@ resource "aws_lb_listener_rule" "onl_ors_webmonitor_rule" {
   }
   condition {
     path_pattern {
-      values = ["/onl-ors-webmonitor/*"]
+      values = ["/ORS2_WebMonitor/*"]
+    }
+  }
+  depends_on = [module.alb.http_tcp_listener_arns]
+}
+
+resource "aws_lb_listener_rule" "onl_ors_printscreport_rule" {
+  listener_arn = module.alb.http_tcp_listener_arns[0]
+  priority     = 106
+  action {
+    type             = "forward"
+    target_group_arn = module.alb.target_group_arns[7]
+  }
+  condition {
+    path_pattern {
+      values = ["/ORS2_PrintScReport/*"]
+    }
+  }
+  depends_on = [module.alb.http_tcp_listener_arns]
+}
+
+resource "aws_lb_listener_rule" "onl_ors_screport_rule" {
+  listener_arn = module.alb.http_tcp_listener_arns[0]
+  priority     = 107
+  action {
+    type             = "forward"
+    target_group_arn = module.alb.target_group_arns[8]
+  }
+  condition {
+    path_pattern {
+      values = ["/ORS2_ScReport/*"]
     }
   }
   depends_on = [module.alb.http_tcp_listener_arns]

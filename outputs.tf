@@ -19,9 +19,9 @@ output "onl_ors_cache_url" {
 ################################################################################
 # ECR Repo 
 ################################################################################
-output "onl_ors_reserve_repository_url" {
+output "onl_ors_repository_url" {
   description = "Url of image repository"
-  value       = aws_ecr_repository.onl-ors-reserve.repository_url
+  value       = aws_ecr_repository.onl-ors-search.repository_url
 }
 ################################################################################
 # Cluster

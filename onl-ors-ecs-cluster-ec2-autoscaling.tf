@@ -28,10 +28,10 @@ module "ecs_cluster" {
       managed_termination_protection = "ENABLED"
 
       managed_scaling = {
-        maximum_scaling_step_size = 5
+        maximum_scaling_step_size = 7
         minimum_scaling_step_size = 1
         status                    = "ENABLED"
-        target_capacity           = 50
+        target_capacity           = 80
       }
 
       default_capacity_provider_strategy = {
@@ -169,38 +169,32 @@ module "alb" {
     {
       port               = 80
       protocol           = "HTTP"
-      target_group_index = 0
-      # default_action = {
-      #   type = "fixed-response"
-
-      #   fixed_response = {
-      #     content_type = "text/plain"
-      #     message_body = "Fixed response content"
-      #     status_code  = "200"
-      #   }
-      # }
+      # target_group_index = 0
+      action_type = "fixed-response"
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "This path is not available"
+        status_code  = "200"
+      }
     },
   ]
 
   # HTTP Listener rules
   # http_tcp_listener_rules = [
   #   {
+    
   #     http_listener_index = 0
-  #     priority            = 2
-
-  #     actions = [
-  #       {
+  #     priority            = 99
+  #     actions = [{
   #         type               = "forward"
-  #         target_group_index = 1
+  #         target_group_index = 0
   #       },
   #     ]
-  #     conditions = [
-  #       {
-  #         path_patterns = ["/reserve/*"]
+  #     conditions = [{
+  #         path_patterns = ["/*"]
   #       },
-
   #     ]
-  #   },
+  #   }
   # ]
 
   target_groups = [
@@ -264,7 +258,7 @@ module "autoscaling" {
   vpc_zone_identifier = var.aws_nonexpose_subnets
   health_check_type   = "EC2"
   min_size            = 1
-  max_size            = 5
+  max_size            = 7
   desired_capacity    = 1
 
   # https://github.com/hashicorp/terraform-provider-aws/issues/12582
